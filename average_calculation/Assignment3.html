@@ -1,0 +1,252 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<style>
+h2 {
+	text-align: center;
+	}
+td {
+  padding: 5px;
+}
+table {
+	margin: auto;
+	}
+input {
+  
+  border: solid 1px;
+}
+body{
+  background-image: url("2.jpg");
+  background-repeat: no-repeat;
+}
+/* Tính năng responsive */
+@media  screen and (max-width: 320px){
+	#name, #maths, #physics, #chemistry{
+		width:100%;
+	}
+	
+	#a1, #goodresult {
+		display: none;
+	}
+	#respon{
+		overflow-x:auto;
+	}
+	body{
+ 		background-image: url("3.jpg");
+  		background-repeat: no-repeat;
+	}
+	
+	#b2, #goodresult2 {
+		display: block;
+		width: 100%;
+	}
+	
+   }
+
+button.a {
+  background-color: #4CAF50;
+  border: none;
+  color: white;
+  padding: 10px 10px;
+  text-align: center;
+  text-decoration: none;
+  display: inline-block;
+  font-size: 16px;
+  margin: 2px 2px;
+  cursor: pointer;
+  
+}
+button.b{
+  background-color: cadetblue;
+  border: none;
+  color: white;
+  padding: 10px 10px;
+  text-align: center;
+  text-decoration: none;
+  font-size: 16px;
+  margin: 2px 2px;
+  cursor: pointer;
+  display: inline-block;
+  display: none;
+}
+.position-button {
+  left: 500px;
+  position: relative;
+  display: block;
+}
+
+</style>
+
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+</head>
+
+<body>
+  <h2>Class Marksheet</h2>
+  
+  <table>
+    <tr>
+      <td style="width:150px;">Họ tên</td>
+      <td><input id="name"></td>
+      <td id="notice1"></td>
+    </tr>
+    <tr>
+      <td style="width:150px;">Điểm toán</td>
+      <td><input id="maths"></td>
+      <td id="notice3"></td>
+    </tr>
+    <tr>
+      <td style="width:150px;">Điểm lý</td>
+      <td><input id="physics"></td>
+      <td id="notice4"></td>
+    </tr>
+    <tr>
+      <td style="width:150px;">Điểm hóa</td>
+      <td><input id="chemistry"></td>
+      <td id="notice5"></td>
+    </tr>
+    </tr>
+ 
+    <tr>
+      <td style="width:150px;"></td>
+      <td><button  onclick="submit();">Nhập</button></td>
+      <td></td>
+    </tr>
+  </table>
+ <div id="respon">
+  <table id="tableData" border="1px" cellpadding="0" cellspacing="0">
+    <tr>
+      <th style="padding:5px 30px">STT</th>
+      <th style="padding:5px 70px">Họ tên</th>
+      <th style="padding:5px 30px">Toán</th>
+      <th style="padding:5px 30px">Lý</th>
+      <th style="padding:5px 30px">Hóa</th>
+      <th style="padding:5px 30px">Trung bình</th>
+    </tr>
+  </table>
+</div>
+  <br>
+<div class="position-button">
+  <button  class="a"  id="a1" onclick="average();">Tính điểm trung bình</button>
+  <button  class="a" id="goodresult">Xác định học sinh giỏi</button>
+</div>
+
+<button  class="b" id="b2" onclick="average();">Tính điểm trung bình</button>
+  <button  class="b" id="goodresult2">Xác định học sinh giỏi</button>
+<script>
+var fullname = document.getElementById("name");
+var classnumber = document.getElementById("classnumber");
+var maths = document.getElementById("maths");
+var physics = document.getElementById("physics");
+var chemistry = document.getElementById("chemistry");
+var notice1 = document.getElementById("notice1");
+var notice2 = document.getElementById("notice2");
+var notice3 = document.getElementById("notice3");
+var notice4 = document.getElementById("notice4");
+var notice5 = document.getElementById("notice5");
+var student = [];
+
+/* Tính năng xác thực khi nhập thông tin và điểm số */
+
+function submit() {
+  var isValid = true;
+  if (fullname.value === "") {
+    notice1.innerHTML = "Mời nhập tên đầy đủ của bạn";
+    isValid = false;
+  } else {
+    notice1.innerHTML = "";
+  }
+  
+  if (isNaN(parseInt(maths.value)) === true || maths.value === "" || parseFloat(maths.value) > 10 || parseFloat(maths.value) < 0) {
+    notice3.innerHTML = "Mời nhập điểm toán của bạn (0 -> 9)";
+    isValid = false;
+  } else {
+    notice3.innerHTML = "";
+  }
+  if (isNaN(parseInt(physics.value)) === true || physics.value === "" || parseFloat(physics.value) > 10 || parseFloat(physics.value) < 0) {
+    notice4.innerHTML = "Mời nhập điểm lý của bạn (0 -> 9)";
+    isValid = false;
+  } else {
+    notice4.innerHTML = "";
+  }
+  if (isNaN(parseInt(chemistry.value)) === true || chemistry.value === "" || parseFloat(chemistry.value) > 10 || parseFloat(chemistry.value) < 0) {
+    notice5.innerHTML = "Mời nhập điểm hóa của bạn (0 -> 9)";
+    isValid = false;
+  } else {
+    notice5.innerHTML = "";
+  }
+  if (isValid === true) {
+    addStudent(fullname.value, maths.value, physics.value, chemistry.value);
+    transfer();
+  }
+  $('td :input').val('');
+  return false;
+ 
+}
+/* Tạo mảng lưu thông tin học sinh  */
+function addStudent(fullname, maths, physics, chemistry) {
+  var newStudent = {
+    fullname: fullname,
+    maths: maths,
+    physics: physics,
+    chemistry: chemistry,
+  };
+  student.push(newStudent);
+}
+
+function round(num, decimals) {
+  var n = Math.pow(10, decimals);
+  return Math.round((n * num).toFixed(decimals)) / n;
+}
+/* Thêm thông tin học sinh cho từng cột và để dấu "?" tại cột điểm trung bình */
+function transfer() {
+  var content = document.getElementById("tableData").innerHTML;
+  var i = student.length - 1;
+  content += "<tr>";
+  content += "<td>" + (i + 1) + " </td>";
+  content += "<td>" + student[i].fullname + " </td>";
+  content += "<td>" + student[i].maths + " </td>";
+  content += "<td>" + student[i].physics + " </td>";
+  content += "<td>" + student[i].chemistry + " </td>";
+  content += "<td class='question'>" + "?" + "</td>";
+  content += "</tr>";
+  document.getElementById("tableData").innerHTML = content;
+  this.studentmaths = student[i].maths;
+  this.studentphysics = student[i].physics;
+  this.studentchemistry = student[i].chemistry;
+  
+}
+/* Tính điểm trung bình */
+function average() {
+  var rows = document.getElementById("tableData").rows.length
+  for (var i = 0; i < rows; i++) {
+    var calculation = round((parseFloat(parseInt(student[i].maths) + parseInt(student[i].physics) + parseInt(student[i].chemistry)) / 3), 2);
+    document.getElementsByClassName("question")[i].innerHTML = calculation;
+  }
+}
+/* Tìm học sinh giỏi */
+$(document).ready(function() {
+  $(goodresult).click(function() {
+    var ques = document.getElementsByClassName("question");
+    for (var i = 0; i < ques.length; i++) {
+      if ($(ques[i]).text() >= 8) {
+        $(ques[i]).parent("tr").css("color","red");
+      }
+    }
+  });
+	$(goodresult2).click(function() {
+    var ques = document.getElementsByClassName("question");
+    for (var i = 0; i < ques.length; i++) {
+      if ($(ques[i]).text() >= 8) {
+        $(ques[i]).parent("tr").css("color","red");
+      }
+    }
+  });
+});
+
+</script>
+
+
+
+</html>
